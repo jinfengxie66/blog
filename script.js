@@ -109,11 +109,13 @@
     }
   });
 
-  // Close panel on Escape
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && panelOpen) {
-      panelOpen = false;
-      widgetPanel.classList.remove('open');
+    if (e.key === 'Escape') {
+      if (panelOpen) {
+        panelOpen = false;
+        widgetPanel.classList.remove('open');
+      }
+      closeModal();
     }
   });
 
@@ -141,6 +143,8 @@
 
       const article = document.createElement('article');
       article.className = 'post-card reveal';
+      article.dataset.slug = post.slug;
+      article.dataset.title = post.title;
       article.innerHTML =
         '<div class="accent-bar"></div>' +
         '<div class="post-card-meta">' +
@@ -148,21 +152,108 @@
           '<time datetime="' + post.date + '">' + post.date + '</time>' +
           '<span class="read-time">约 ' + minutes + ' 分钟阅读</span>' +
         '</div>' +
-        '<h3><a href="#">' + post.title + '</a></h3>' +
+        '<h3><a href="#post/' + post.slug + '" class="post-link">' + post.title + '</a></h3>' +
         '<p>' + post.summary + '</p>';
 
       postsContainer.appendChild(article);
       observer.observe(article);
+
+      // Click handler for the entire card
+      article.addEventListener('click', function (e) {
+        e.preventDefault();
+        openPost(post.slug, post.title);
+      });
     });
   }
 
   fetch('posts.json')
     .then((res) => res.json())
     .then((posts) => {
-      posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+      var hash = window.location.hash;
       renderPosts(posts);
+
+      // Check if there's a hash route on load
+      if (hash && hash.startsWith('#post/')) {
+        var slugFromHash = hash.replace('#post/', '');
+        var match = posts.find(function (p) { return p.slug === slugFromHash; });
+        if (match) {
+          openPost(match.slug, match.title);
+        }
+      }
     })
-    .catch(() => {
+    .catch(function () {
       postsContainer.innerHTML = '<p style="text-align:center;color:var(--text-muted)">文章加载失败，请刷新重试。</p>';
     });
+
+  // ---- Hash change listener ----
+  window.addEventListener('hashchange', function () {
+    var hash = window.location.hash;
+    if (hash && hash.startsWith('#post/')) {
+      var slug = hash.replace('#post/', '');
+      fetch('posts.json')
+        .then(function (res) { return res.json(); })
+        .then(function (posts) {
+          var match = posts.find(function (p) { return p.slug === slug; });
+          if (match) {
+            openPost(match.slug, match.title);
+          }
+        });
+    }
+  });
+
+  // ---- Article Modal ----
+  var modalOverlay = document.getElementById('modalOverlay');
+  var modalContent = document.getElementById('modalContent');
+  var modalClose = document.getElementById('modalClose');
+  var currentSlug = null;
+
+  function openPost(slug, title) {
+    currentSlug = slug;
+    window.location.hash = 'post/' + slug;
+    modalContent.innerHTML =
+      '<div class="modal-loading">加载中...</div>';
+    modalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    var isDark = html.getAttribute('data-theme') === 'dark';
+    // Strip frontmatter: split by --- and take everything after the second ---
+    fetch('posts/' + slug + '.md')
+      .then(function (res) { return res.text(); })
+      .then(function (raw) {
+        var parts = raw.split('---');
+        var body = parts.length >= 3 ? parts.slice(2).join('---') : raw;
+        modalContent.innerHTML =
+          '<article class="post-detail">' +
+            '<h1 class="post-detail-title">' + title + '</h1>' +
+            '<div class="post-detail-body">' + marked.parse(body) + '</div>' +
+          '</article>';
+        // Apply syntax highlighting classes
+        modalContent.querySelectorAll('pre code').forEach(function (block) {
+          block.classList.add('code-block');
+        });
+      })
+      .catch(function () {
+        modalContent.innerHTML =
+          '<p style="text-align:center;color:var(--text-muted);padding:40px 0;">文章加载失败。</p>';
+      });
+  }
+
+  function closeModal() {
+    if (modalOverlay.classList.contains('open')) {
+      modalOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+      currentSlug = null;
+      // Remove hash only if it's a post hash
+      if (window.location.hash.startsWith('#post/')) {
+        history.replaceState(null, '', window.location.pathname);
+      }
+    }
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', function (e) {
+    if (e.target === modalOverlay) {
+      closeModal();
+    }
+  });
 })();

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <!-- Reading progress bar -->
@@ -123,6 +124,14 @@
           <span class="panel-btn-text">回到頂部</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Article detail modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-container" id="modalContainer">
+      <button class="modal-close" id="modalClose" aria-label="关闭">✕</button>
+      <div class="modal-content" id="modalContent"></div>
     </div>
   </div>
 

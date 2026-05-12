@@ -1,58 +1,58 @@
 [
   {
-    "id": 1,
+    "slug": "python-algorithm",
     "title": "Python 高效算法设计与性能优化技巧",
-    "summary": "从时间复杂度分析到实际工程中的缓存、并行与数据结构选型，写出真正高性能的 Python。",
+    "date": "2026-05-12",
     "tag": "Python 算法",
     "tagClass": "tag-algo",
-    "date": "2026-05-12"
+    "summary": "从时间复杂度分析到实际工程中的缓存、并行与数据结构选型，写出真正高性能的 Python。"
   },
   {
-    "id": 2,
+    "slug": "ai-agent-design",
     "title": "构建智能 Agent 的架构设计与实践",
-    "summary": "从工具调用、记忆管理到多 Agent 协作，深入探讨 AI Agent 系统的核心设计模式。",
+    "date": "2026-05-10",
     "tag": "Agent",
     "tagClass": "tag-agent",
-    "date": "2026-05-10"
+    "summary": "从工具调用、记忆管理到多 Agent 协作，深入探讨 AI Agent 系统的核心设计模式。"
   },
   {
-    "id": 3,
+    "slug": "llm-finetune",
     "title": "大模型微调实战：从 SFT 到 RLHF",
-    "summary": "以 Llama 为例，详解监督微调、奖励建模与强化学习对齐的全流程。",
+    "date": "2026-05-06",
     "tag": "大模型",
     "tagClass": "tag-llm",
-    "date": "2026-05-06"
+    "summary": "以 Llama 为例，详解监督微调、奖励建模与强化学习对齐的全流程。"
   },
   {
-    "id": 4,
+    "slug": "transformer-architecture",
     "title": "Transformer 架构逐层拆解与实现",
-    "summary": "用 PyTorch 从零实现一个 Transformer，彻底理解自注意力与位置编码。",
+    "date": "2026-05-02",
     "tag": "深度学习",
     "tagClass": "tag-dl",
-    "date": "2026-05-02"
+    "summary": "用 PyTorch 从零实现一个 Transformer，彻底理解自注意力与位置编码。"
   },
   {
-    "id": 5,
+    "slug": "feature-engineering",
     "title": "特征工程的系统化方法与自动化工具",
-    "summary": "从数据预处理、特征构造到特征选择，梳理一套可复用的特征工程体系。",
+    "date": "2026-04-28",
     "tag": "机器学习",
     "tagClass": "tag-ml",
-    "date": "2026-04-28"
+    "summary": "从数据预处理、特征构造到特征选择，梳理一套可复用的特征工程体系。"
   },
   {
-    "id": 6,
+    "slug": "distributed-crawler",
     "title": "大规模分布式爬虫系统设计",
-    "summary": "从请求调度、反爬对抗到数据清洗，构建一个高可用的爬虫框架。",
+    "date": "2026-04-22",
     "tag": "爬虫",
     "tagClass": "tag-crawl",
-    "date": "2026-04-22"
+    "summary": "从请求调度、反爬对抗到数据清洗，构建一个高可用的爬虫框架。"
   },
   {
-    "id": 7,
+    "slug": "python-data-analysis",
     "title": "Python 数据分析工作流最佳实践",
-    "summary": "Pandas、Polars 与 SQL 的协同使用技巧，让数据处理更高效优雅。",
+    "date": "2026-04-15",
     "tag": "数据分析",
     "tagClass": "tag-da",
-    "date": "2026-04-15"
+    "summary": "Pandas、Polars 与 SQL 的协同使用技巧，让数据处理更高效优雅。"
   }
 ]
