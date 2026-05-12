@@ -2,14 +2,17 @@
 <html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <meta name="description" content="山間小站 — Python · 算法 · 数据科学 · 人工智能">
   <title>山间小站</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css" id="hljs-light">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css" id="hljs-dark" disabled>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
 </head>
 <body>
   <!-- Reading progress bar -->
@@ -18,18 +21,20 @@
   <header class="navbar">
     <div class="container nav-inner">
       <a href="#" class="logo">山間小站</a>
-      <button class="menu-toggle" aria-label="导航菜单">
-        <span></span><span></span><span></span>
-      </button>
-      <nav class="nav-links">
-        <a href="#home">首頁</a>
-        <a href="#posts">文章</a>
-        <a href="#about">關於</a>
-      </nav>
-      <button class="theme-toggle" aria-label="切换主题">
-        <span class="icon-sun">☀️</span>
-        <span class="icon-moon">🌙</span>
-      </button>
+      <div class="nav-right">
+        <nav class="nav-links">
+          <a href="#home">首頁</a>
+          <a href="#posts">文章</a>
+          <a href="#about">關於</a>
+        </nav>
+        <button class="theme-toggle" aria-label="切换主题">
+          <span class="icon-sun">☀️</span>
+          <span class="icon-moon">🌙</span>
+        </button>
+        <button class="menu-toggle" aria-label="导航菜单">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -88,26 +93,9 @@
   <!-- Back to top -->
   <button class="back-to-top" id="backToTop" aria-label="回到顶部">↑</button>
 
-  <!-- Corgi Widget -->
+  <!-- Corgi Widget (SVG) -->
   <div class="corgi-widget" id="corgiWidget">
-    <button class="corgi" id="corgiBtn" aria-label="柯基挂件">
-      <div class="corgi-ear corgi-ear-left"></div>
-      <div class="corgi-ear corgi-ear-right"></div>
-      <div class="corgi-face">
-        <div class="corgi-eye corgi-eye-left"></div>
-        <div class="corgi-eye corgi-eye-right"></div>
-        <div class="corgi-nose"></div>
-        <div class="corgi-mouth"></div>
-        <div class="corgi-blush corgi-blush-left"></div>
-        <div class="corgi-blush corgi-blush-right"></div>
-      </div>
-      <div class="corgi-body">
-        <div class="corgi-paw corgi-paw-left"></div>
-        <div class="corgi-paw corgi-paw-right"></div>
-      </div>
-      <div class="corgi-tail"></div>
-    </button>
-
+    <!-- Widget Panel -->
     <div class="widget-panel" id="widgetPanel">
       <div class="panel-clock">
         <span class="clock-time" id="clockTime">00:00:00</span>
@@ -125,6 +113,110 @@
         </button>
       </div>
     </div>
+
+    <!-- Corgi SVG -->
+    <button class="corgi" id="corgiBtn" aria-label="柯基挂件">
+      <svg class="corgi-svg" viewBox="0 0 160 180" xmlns="http://www.w3.org/2000/svg">
+        <!-- Shadow under corgi -->
+        <ellipse cx="80" cy="172" rx="55" ry="8" fill="rgba(0,0,0,0.08)"/>
+
+        <!-- Tail (behind body) -- group for wag animation -->
+        <g class="corgi-tail-group">
+          <path d="M58 114 Q38 96 34 78 Q32 68 38 64 Q44 62 48 72 Q54 90 62 108" fill="#d4954b"/>
+          <path d="M48 88 Q42 72 44 66" stroke="#fdf6ee" stroke-width="5" stroke-linecap="round" fill="none"/>
+        </g>
+
+        <!-- Back legs -->
+        <rect class="corgi-leg" x="54" y="138" width="18" height="16" rx="8" fill="#d4954b"/>
+        <ellipse cx="63" cy="152" rx="10" ry="5" fill="#fdf6ee"/>
+        <!-- toe beans back -->
+        <circle cx="58" cy="153" r="2.2" fill="#e8b4a0"/>
+        <circle cx="63" cy="153.5" r="2.2" fill="#e8b4a0"/>
+        <circle cx="68" cy="153" r="2.2" fill="#e8b4a0"/>
+
+        <!-- Body -->
+        <ellipse class="corgi-body-shape" cx="80" cy="118" rx="38" ry="32" fill="#d4954b"/>
+
+        <!-- Belly -->
+        <ellipse cx="80" cy="128" rx="26" ry="20" fill="#fdf6ee"/>
+
+        <!-- Front legs -->
+        <rect class="corgi-leg" x="84" y="136" width="18" height="16" rx="8" fill="#d4954b"/>
+        <ellipse cx="93" cy="150" rx="10" ry="5" fill="#fdf6ee"/>
+        <!-- toe beans front -->
+        <circle cx="88" cy="151" r="2.2" fill="#e8b4a0"/>
+        <circle cx="93" cy="151.5" r="2.2" fill="#e8b4a0"/>
+        <circle cx="98" cy="151" r="2.2" fill="#e8b4a0"/>
+
+        <!-- Collar -->
+        <rect x="57" y="86" width="48" height="7" rx="3.5" fill="#c0392b"/>
+        <!-- Bell -->
+        <circle cx="81" cy="96" r="6" fill="#f1c40f"/>
+        <circle cx="81" cy="98" r="1.5" fill="#d4a017"/>
+        <line x1="81" y1="90" x2="81" y2="93" stroke="#d4a017" stroke-width="1.5"/>
+
+        <!-- Ears -->
+        <g class="corgi-ear corgi-ear-left-svg">
+          <path d="M46 68 L34 24 L64 54 Z" fill="#d4954b" stroke="#c08040" stroke-width="1"/>
+          <path d="M48 62 L39 32 L60 54 Z" fill="#f0cfb0"/>
+        </g>
+        <g class="corgi-ear corgi-ear-right-svg">
+          <path d="M114 68 L126 24 L96 54 Z" fill="#d4954b" stroke="#c08040" stroke-width="1"/>
+          <path d="M112 62 L121 32 L100 54 Z" fill="#f0cfb0"/>
+        </g>
+
+        <!-- Head -->
+        <ellipse class="corgi-head" cx="80" cy="74" rx="44" ry="38" fill="#d4954b"/>
+
+        <!-- Face white blaze -->
+        <path d="M80 38 Q64 42 58 66 Q56 82 62 96 Q72 108 80 110 Q88 108 98 96 Q104 82 102 66 Q98 46 80 38Z" fill="#fdf6ee"/>
+
+        <!-- Eyebrows -->
+        <g class="corgi-brow">
+          <ellipse cx="63" cy="60" rx="4" ry="2.5" fill="#b5733a"/>
+          <ellipse cx="97" cy="60" rx="4" ry="2.5" fill="#b5733a"/>
+        </g>
+
+        <!-- Eyes -->
+        <g class="corgi-eyes">
+          <!-- Left eye -->
+          <ellipse cx="64" cy="70" rx="8.5" ry="9.5" fill="white"/>
+          <ellipse cx="65" cy="70" rx="5.5" ry="6.5" fill="#3d2b1f"/>
+          <circle cx="67" cy="67" r="2.5" fill="white"/>
+          <circle cx="63" cy="73" r="1.2" fill="white"/>
+
+          <!-- Right eye -->
+          <ellipse cx="96" cy="70" rx="8.5" ry="9.5" fill="white"/>
+          <ellipse cx="95" cy="70" rx="5.5" ry="6.5" fill="#3d2b1f"/>
+          <circle cx="93" cy="67" r="2.5" fill="white"/>
+          <circle cx="97" cy="73" r="1.2" fill="white"/>
+        </g>
+
+        <!-- Blush -->
+        <g class="corgi-blush-group">
+          <ellipse cx="54" cy="82" rx="7" ry="4.5" fill="rgba(233,140,140,0.45)"/>
+          <ellipse cx="106" cy="82" rx="7" ry="4.5" fill="rgba(233,140,140,0.45)"/>
+        </g>
+
+        <!-- Nose -->
+        <ellipse cx="80" cy="80" rx="7" ry="5.5" fill="#3d2b1f"/>
+        <ellipse cx="78" cy="79" rx="2.5" ry="2" fill="rgba(255,255,255,0.3)"/>
+
+        <!-- Mouth -->
+        <path d="M72 88 Q80 96 88 88" stroke="#3d2b1f" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+        <!-- Tongue -->
+        <g class="corgi-tongue">
+          <path d="M76 91 Q78 101 80 101 Q82 101 84 91" fill="#f48fb1"/>
+          <line x1="80" y1="92" x2="80" y2="99" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+        </g>
+
+        <!-- Heart sparkle above -->
+        <g class="corgi-sparkle">
+          <path d="M88 36 Q88 30 84 30 Q80 30 80 36 Q80 30 76 30 Q72 30 72 36 Q72 44 80 48 Q88 44 88 36Z" fill="#f8b4b4" opacity="0.8"/>
+        </g>
+      </svg>
+    </button>
   </div>
 
   <!-- Article detail modal -->
