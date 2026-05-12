@@ -1,9 +1,0 @@
-{
-  "hooks": {
-    "Stop": [
-      {
-        "command": "bash /home/xjf/blog/.claude/hooks/stop-check.sh"
-      }
-    ]
-  }
-}
