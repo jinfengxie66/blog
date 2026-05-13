@@ -4,57 +4,53 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>文章管理 · 山間小站</title>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
   <style>
     :root {
-      --bg: #f9f6f0;
-      --card: #fff;
-      --text: #4a4238;
-      --text2: #8b8178;
-      --text3: #b9b0a6;
-      --border: #e6e0d4;
-      --accent: #8b5e3c;
-      --accent2: #c99a6b;
-      --red: #c0392b;
-      --green: #27ae60;
+      --bg: #f9f6f0; --card: #fff; --text: #4a4238; --text2: #8b8178;
+      --text3: #b9b0a6; --border: #e6e0d4; --accent: #8b5e3c; --accent2: #c99a6b;
+      --red: #c0392b; --green: #27ae60; --blue: #2563eb;
       --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
       --serif: "Noto Serif SC", "Songti SC", serif;
       --radius: 8px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
+      font-family: var(--font); background: var(--bg); color: var(--text);
+      line-height: 1.6; min-height: 100vh;
     }
-    .container { max-width: 960px; margin: 0 auto; padding: 20px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px 24px; }
 
     /* Header */
     .admin-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 24px; border-bottom: 1px solid var(--border);
+      padding: 14px 24px; border-bottom: 1px solid var(--border);
       background: rgba(249,246,240,0.92); backdrop-filter: blur(12px);
-      position: sticky; top: 0; z-index: 10;
+      position: sticky; top: 0; z-index: 100;
     }
-    .admin-header h1 { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.04em; }
-    .admin-header a { color: var(--text2); font-size: 0.88rem; text-decoration: none; margin-right: 16px; }
-    .admin-header a:hover { color: var(--text); }
+    .admin-header h1 { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; letter-spacing: 0.04em; }
+    .header-links { display: flex; align-items: center; gap: 10px; }
+    .header-links a { color: var(--text2); font-size: 0.85rem; text-decoration: none; }
+    .header-links a:hover { color: var(--text); }
+
+    /* Buttons */
     .btn {
-      padding: 8px 18px; border: none; border-radius: var(--radius);
-      cursor: pointer; font-size: 0.88rem; font-weight: 520;
-      transition: background 0.2s, opacity 0.2s;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 8px 16px; border: none; border-radius: var(--radius);
+      cursor: pointer; font-size: 0.86rem; font-weight: 520;
+      transition: all 0.2s; white-space: nowrap;
     }
     .btn:hover { opacity: 0.85; }
     .btn-accent { background: var(--accent); color: #fff; }
+    .btn-blue { background: var(--blue); color: #fff; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text2); }
     .btn-outline:hover { background: var(--border); color: var(--text); }
     .btn-red { background: var(--red); color: #fff; }
     .btn-green { background: var(--green); color: #fff; }
-    .btn-sm { padding: 5px 12px; font-size: 0.8rem; }
+    .btn-sm { padding: 4px 10px; font-size: 0.78rem; }
+    .btn-xs { padding: 3px 8px; font-size: 0.72rem; }
 
-    /* Auth page */
+    /* Auth */
     .auth-box {
       max-width: 420px; margin: 80px auto; padding: 40px;
       background: var(--card); border: 1px solid var(--border);
@@ -66,30 +62,35 @@
     .auth-box input {
       width: 100%; padding: 12px 16px; border: 1px solid var(--border);
       border-radius: var(--radius); font-size: 0.9rem; font-family: monospace;
-      background: var(--bg); color: var(--text);
-      margin-bottom: 16px;
+      background: var(--bg); color: var(--text); margin-bottom: 16px;
     }
     .auth-box input:focus { outline: none; border-color: var(--accent); }
 
     /* Post list */
     .post-list-header {
       display: flex; align-items: center; justify-content: space-between;
-      margin: 32px 0 20px;
+      margin: 32px 0 16px; flex-wrap: wrap; gap: 10px;
     }
-    .post-list-header h3 { font-family: var(--serif); font-size: 1.15rem; }
+    .post-list-header h3 { font-family: var(--serif); font-size: 1.1rem; }
     .post-item {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px; background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); margin-bottom: 10px;
-      transition: box-shadow 0.2s;
+      padding: 14px 20px; background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 8px; gap: 10px;
+      transition: box-shadow 0.2s; flex-wrap: wrap;
     }
     .post-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .post-item-info { flex: 1; }
-    .post-item-info strong { font-size: 0.96rem; }
-    .post-item-info span { font-size: 0.8rem; color: var(--text3); margin-left: 12px; }
-    .post-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .post-item-info { flex: 1; min-width: 0; }
+    .post-item-info strong { font-size: 0.94rem; display: block; margin-bottom: 2px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 500px; }
+    .post-item-meta { font-size: 0.78rem; color: var(--text3); display: flex; gap: 10px; flex-wrap: wrap; }
+    .post-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .pinned-badge { display: inline-block; font-size: 0.65rem; background: #fde68a; color: #92400e; padding: 1px 6px; border-radius: 3px; margin-right: 4px; }
 
-    .tag-sm { display: inline-block; padding: 1px 8px; font-size: 0.7rem; border-radius: 3px; font-weight: 500; }
+    /* Tags */
+    .tag-sm {
+      display: inline-block; padding: 1px 8px; font-size: 0.7rem;
+      border-radius: 3px; font-weight: 500;
+    }
     .tag-algo { background: #fef0e0; color: #8b5e3c; }
     .tag-agent { background: #e8ecf4; color: #4a5580; }
     .tag-llm { background: #f2e4ec; color: #7d4a6a; }
@@ -99,49 +100,94 @@
     .tag-da { background: #e0ece3; color: #4a6b5a; }
     .tag-other { background: #f3f4f6; color: #6b7280; }
 
-    /* Editor */
-    .editor-container { margin-top: 24px; display: none; }
+    /* Editor layout */
+    .editor-container { display: none; margin-top: 20px; }
     .editor-container.active { display: block; }
-    .editor-panes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
-    @media (max-width: 700px) { .editor-panes { grid-template-columns: 1fr; } }
-
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 0.85rem; font-weight: 520; margin-bottom: 4px; color: var(--text2); }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%; padding: 10px 14px; border: 1px solid var(--border);
-      border-radius: var(--radius); font-size: 0.9rem; font-family: var(--font);
+    .editor-top {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 12px; margin-bottom: 16px;
+    }
+    @media (max-width: 800px) { .editor-top { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .editor-top { grid-template-columns: 1fr; } }
+    .form-group { }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 530; margin-bottom: 3px; color: var(--text2); }
+    .form-group input, .form-group select {
+      width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+      border-radius: var(--radius); font-size: 0.88rem; font-family: var(--font);
       background: var(--card); color: var(--text);
     }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-      outline: none; border-color: var(--accent);
-    }
-    .form-group textarea { resize: vertical; min-height: 300px; font-family: monospace; font-size: 0.88rem; line-height: 1.6; }
-    .form-row { display: flex; gap: 12px; }
-    .form-row .form-group { flex: 1; }
-    .preview-pane {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 24px;
-      min-height: 300px; font-size: 0.93rem; overflow-y: auto;
-    }
-    .preview-pane h2 { font-size: 1.2rem; margin: 16px 0 8px; }
-    .preview-pane h3 { font-size: 1.05rem; margin: 12px 0 6px; }
-    .preview-pane p { margin-bottom: 12px; }
-    .preview-pane pre { background: #f5f2eb; padding: 12px 16px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; }
-    .preview-pane code { font-family: monospace; font-size: 0.88em; background: #f5f2eb; padding: 2px 4px; border-radius: 3px; }
-    .preview-pane pre code { background: none; padding: 0; }
-    .preview-pane blockquote { border-left: 3px solid var(--accent2); padding-left: 14px; color: var(--text2); margin: 12px 0; }
-    .preview-pane table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-    .preview-pane th, .preview-pane td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
-    .preview-pane th { background: var(--bg); }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+    .editor-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+    .editor-meta .status { font-size: 0.85rem; margin-left: auto; }
+    .editor-meta .status.ok { color: var(--green); }
+    .editor-meta .status.err { color: var(--red); }
+    .editor-meta .status.info { color: var(--text2); }
 
-    .editor-actions { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
-    .status-msg { font-size: 0.88rem; }
-    .status-msg.ok { color: var(--green); }
-    .status-msg.err { color: var(--red); }
+    /* EasyMDE overrides */
+    .editor-wrapper { margin-bottom: 0; }
+    .EasyMDEContainer .CodeMirror {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      font-size: 0.9rem; line-height: 1.6; color: var(--text);
+    }
+    .EasyMDEContainer .editor-toolbar {
+      border: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--bg);
+    }
+    .EasyMDEContainer .editor-toolbar button { color: var(--text2) !important; }
+    .EasyMDEContainer .editor-toolbar button:hover { background: var(--border) !important; border-color: var(--border) !important; color: var(--text) !important; }
+    .EasyMDEContainer .editor-toolbar button.active { background: var(--border) !important; border-color: var(--border) !important; color: var(--text) !important; }
+    .EasyMDEContainer .editor-toolbar i.separator { border-left-color: var(--border); }
+    .EasyMDEContainer .CodeMirror-cursor { border-left-color: var(--text); }
+    .EasyMDEContainer .editor-preview {
+      background: var(--card) !important; border-color: var(--border) !important;
+    }
+    .EasyMDEContainer .editor-preview h2 { font-family: var(--serif); }
+    .EasyMDEContainer .editor-preview pre {
+      background: #f5f2eb !important; padding: 12px 16px !important;
+      border-radius: 6px !important; font-size: 0.85rem !important;
+    }
+    .EasyMDEContainer .editor-preview code { font-size: 0.88em; }
+    .editor-statusbar { border-color: var(--border) !important; background: var(--bg) !important; color: var(--text3) !important; font-size: 0.78rem !important; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.3);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 32px 36px; max-width: 440px; width: 90%; text-align: center;
+    }
+    .modal-box h3 { font-family: var(--serif); margin-bottom: 12px; }
+    .modal-box p { color: var(--text2); font-size: 0.9rem; margin-bottom: 20px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+    /* Template dropdown */
+    .template-btn { position: relative; display: inline-block; }
+    .template-dropdown {
+      display: none; position: absolute; top: 100%; left: 0;
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1); min-width: 220px; z-index: 50;
+    }
+    .template-dropdown.open { display: block; }
+    .template-dropdown button {
+      display: block; width: 100%; padding: 10px 16px; border: none;
+      background: none; text-align: left; cursor: pointer; font-size: 0.88rem;
+      color: var(--text); font-family: var(--font);
+    }
+    .template-dropdown button:hover { background: var(--bg); }
+    .template-dropdown button:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+    .template-dropdown button:last-child { border-radius: 0 0 var(--radius) var(--radius); }
 
     /* Loading */
     .loading { text-align: center; padding: 40px; color: var(--text3); }
-    .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: -4px; }
+    .spinner {
+      display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 0.6s linear infinite; vertical-align: -3px; margin-right: 6px;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
@@ -149,23 +195,35 @@
   <header class="admin-header">
     <div>
       <h1>文章管理</h1>
+    </div>
+    <div class="header-links" id="headerActions">
       <a href="/blog/" target="_blank">← 返回博客</a>
     </div>
-    <div id="headerActions"></div>
   </header>
 
-  <div class="container" id="app">
-    <!-- Rendered by JS -->
+  <div class="container" id="app"></div>
+
+  <!-- Delete confirmation modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+      <h3>确认删除</h3>
+      <p id="deleteMsg">确定要删除这篇文章吗？此操作不可撤销。</p>
+      <div class="modal-actions">
+        <button class="btn btn-red" onclick="window._confirmDelete()">删除</button>
+        <button class="btn btn-outline" onclick="window._closeDeleteModal()">取消</button>
+      </div>
+    </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
   <script>
   (function () {
-    const OWNER = 'jinfengxie66';
-    const REPO = 'blog';
-    const BRANCH = 'master';
-    const API = 'https://api.github.com';
+    var OWNER = 'jinfengxie66';
+    var REPO = 'blog';
+    var BRANCH = 'master';
+    var API = 'https://api.github.com';
 
-    const TAGS = [
+    var TAGS = [
       { label: 'Python 算法', value: 'tag-algo' },
       { label: 'Agent', value: 'tag-agent' },
       { label: '大模型', value: 'tag-llm' },
@@ -176,38 +234,62 @@
       { label: '其他', value: 'tag-other' }
     ];
 
-    const app = document.getElementById('app');
-    const headerActions = document.getElementById('headerActions');
+    var TEMPLATES = {
+      '技术教程': '## 背景\n\n\n## 核心内容\n\n\n## 代码示例\n\n```python\n\n```\n\n## 总结\n',
+      '问题解答': '## 问题\n\n\n## 原因分析\n\n\n## 解决方案\n\n\n## 参考\n',
+      '工具推荐': '## 工具简介\n\n\n## 安装与配置\n\n```bash\n\n```\n\n## 使用技巧\n\n\n## 总结\n',
+      '思考随笔': '最近在学习和实践中产生了一些想法...\n\n## 观点一\n\n\n## 观点二\n\n\n## 总结\n',
+    };
 
-    function getToken() { return localStorage.getItem('blog_admin_token'); }
+    var app = document.getElementById('app');
+    var headerEl = document.getElementById('headerActions');
+    var easyMDE = null;
+    var currentSlug = null;
+    var pendingDelete = null;
+
+    function token() { return localStorage.getItem('blog_admin_token'); }
     function setToken(t) { localStorage.setItem('blog_admin_token', t); }
     function clearToken() { localStorage.removeItem('blog_admin_token'); }
 
     function apiHeaders() {
       return {
-        'Authorization': 'Bearer ' + getToken(),
+        'Authorization': 'Bearer ' + token(),
         'Accept': 'application/vnd.github.v3+json',
       };
     }
 
-    // ---- Render Auth ----
+    function esc(s) {
+      return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function today() {
+      var d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    function slugify(title) {
+      return title.toLowerCase().replace(/[^\w一-鿿]+/g, '-').replace(/^-|-$/g, '').substring(0, 50) || 'untitled';
+    }
+
+    // ---- Auth ----
     function renderAuth() {
-      headerActions.innerHTML = '';
+      headerEl.innerHTML = '<a href="/blog/" target="_blank">← 返回博客</a>';
       app.innerHTML = `
         <div class="auth-box">
           <h2>管理后台</h2>
           <p>请输入 GitHub Personal Access Token（Classic），需勾选 <code>repo</code> 权限。<br>
-          在 <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> 创建。</p>
+          在 <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github.com/settings/tokens</a> 创建。</p>
           <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-          <button class="btn btn-accent" onclick="window._saveToken()" style="width:100%;padding:12px;">保存并登录</button>
+          <button class="btn btn-accent" onclick="window.__saveToken()" style="width:100%;padding:12px;">保存并登录</button>
         </div>`;
     }
 
-    window._saveToken = function () {
+    window.__saveToken = function () {
       var t = document.getElementById('tokenInput').value.trim();
       if (!t) { alert('请输入 Token'); return; }
       setToken(t);
-      load();
+      init();
     };
 
     function logout() {
@@ -215,123 +297,271 @@
       renderAuth();
     }
 
-    // ---- Render post list ----
+    // ---- Post List ----
     function renderPostList(posts) {
-      headerActions.innerHTML = `
-        <button class="btn btn-accent" onclick="window._newPost()">＋ 新建文章</button>
-        <button class="btn btn-outline btn-sm" onclick="window._logout()">退出</button>`;
-      var html = '<div class="post-list-header"><h3>所有文章</h3></div>';
+      headerEl.innerHTML = `
+        <a href="/blog/" target="_blank">← 返回博客</a>
+        <button class="btn btn-accent btn-sm" onclick="window.__newPost()">＋ 新建</button>
+        <button class="btn btn-outline btn-sm" onclick="window.__logout()">退出</button>`;
+
+      // Sort: pinned first, then by date
+      posts.sort(function (a, b) {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        return new Date(b.date) - new Date(a.date);
+      });
+
+      var html = '<div class="post-list-header"><h3>所有文章 (' + posts.length + ')</h3></div>';
       if (posts.length === 0) {
-        html += '<p style="color:var(--text3);text-align:center;padding:40px;">暂无文章，点击上方按钮新建。</p>';
+        html += '<div class="loading">暂无文章，点击上方按钮新建。</div>';
       }
+
       posts.forEach(function (p) {
+        var pinnedHtml = p.pinned ? '<span class="pinned-badge">置顶</span>' : '';
         html += `
           <div class="post-item">
             <div class="post-item-info">
-              <strong>${esc(p.title)}</strong>
-              <span class="tag-sm ${p.tagClass}">${esc(p.tag)}</span>
-              <span>${esc(p.date)}</span>
+              <strong>${pinnedHtml}${esc(p.title)}</strong>
+              <div class="post-item-meta">
+                <span class="tag-sm ${p.tagClass}">${esc(p.tag)}</span>
+                <span>${esc(p.date)}</span>
+                <span>slug: ${esc(p.slug)}</span>
+              </div>
             </div>
             <div class="post-item-actions">
-              <button class="btn btn-outline btn-sm" onclick="window._editPost('${esc(p.slug)}')">编辑</button>
+              ${p.pinned ? '<button class="btn btn-outline btn-xs" onclick="window.__togglePin(\'' + esc(p.slug) + '\',false)">取消置顶</button>' : '<button class="btn btn-outline btn-xs" onclick="window.__togglePin(\'' + esc(p.slug) + '\',true)">置顶</button>'}
+              <button class="btn btn-outline btn-xs" onclick="window.__editPost(\'' + esc(p.slug) + '\')">编辑</button>
+              <button class="btn btn-outline btn-xs" style="color:var(--red);border-color:var(--red);" onclick="window.__deletePost(\'' + esc(p.slug) + '\',\'' + esc(p.title) + '\')">删除</button>
             </div>
           </div>`;
       });
       app.innerHTML = html;
     }
 
-    // ---- Load posts ----
-    function loadPosts(cb) {
-      fetch('posts.json')
+    // ---- Delete ----
+    window.__deletePost = function (slug, title) {
+      pendingDelete = slug;
+      document.getElementById('deleteMsg').innerHTML = '确定要删除 <strong>' + esc(title) + '</strong> 吗？<br>此操作不可撤销。';
+      document.getElementById('deleteModal').classList.add('open');
+    };
+
+    window._confirmDelete = function () {
+      if (!pendingDelete) return;
+      var slug = pendingDelete;
+      pendingDelete = null;
+      document.getElementById('deleteModal').classList.remove('open');
+
+      var paths = ['posts/' + slug + '.md'];
+      // Delete .md file
+      fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + paths[0] + '?ref=' + BRANCH, { headers: apiHeaders() })
         .then(function (r) { return r.json(); })
-        .then(function (posts) { cb(posts); })
-        .catch(function () { cb([]); });
+        .then(function (file) {
+          return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + paths[0], {
+            method: 'DELETE',
+            headers: apiHeaders(),
+            body: JSON.stringify({ message: 'delete: ' + slug, sha: file.sha, branch: BRANCH }),
+          });
+        })
+        .then(function () {
+          return removeFromPostsJson(slug);
+        })
+        .then(function () {
+          loadPosts(renderPostList);
+        })
+        .catch(function (e) { alert('删除失败: ' + e.message); });
+    };
+
+    window._closeDeleteModal = function () {
+      pendingDelete = null;
+      document.getElementById('deleteModal').classList.remove('open');
+    };
+
+    function removeFromPostsJson(slug) {
+      return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json?ref=' + BRANCH, { headers: apiHeaders() })
+        .then(function (r) { return r.json(); })
+        .then(function (file) {
+          var posts = JSON.parse(decode(file.content));
+          var idx = posts.findIndex(function (p) { return p.slug === slug; });
+          if (idx >= 0) posts.splice(idx, 1);
+          var nc = JSON.stringify(posts, null, 2) + '\n';
+          return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json', {
+            method: 'PUT', headers: apiHeaders(),
+            body: JSON.stringify({ message: 'delete: ' + slug, content: encode(nc), sha: file.sha, branch: BRANCH }),
+          });
+        });
     }
 
+    // ---- Pin toggle ----
+    window.__togglePin = function (slug, pinned) {
+      fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json?ref=' + BRANCH, { headers: apiHeaders() })
+        .then(function (r) { return r.json(); })
+        .then(function (file) {
+          var posts = JSON.parse(decode(file.content));
+          var p = posts.find(function (x) { return x.slug === slug; });
+          if (!p) throw new Error('Post not found in index');
+          p.pinned = pinned;
+          var nc = JSON.stringify(posts, null, 2) + '\n';
+          return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json', {
+            method: 'PUT', headers: apiHeaders(),
+            body: JSON.stringify({ message: (pinned ? 'pin: ' : 'unpin: ') + slug, content: encode(nc), sha: file.sha, branch: BRANCH }),
+          });
+        })
+        .then(function () { loadPosts(renderPostList); })
+        .catch(function (e) { alert('操作失败: ' + e.message); });
+    };
+
     // ---- Editor ----
+    window.__newPost = function () { renderEditor('', {}); };
+    window.__editPost = function (slug) {
+      fetch('https://raw.githubusercontent.com/' + OWNER + '/' + REPO + '/' + BRANCH + '/posts/' + slug + '.md')
+        .then(function (r) { return r.text(); })
+        .then(function (raw) {
+          var parts = raw.split('---');
+          var meta = {}, body = raw.trim();
+          if (parts.length >= 3) {
+            var fm = parts[1];
+            fm.split('\n').forEach(function (line) {
+              var m = line.match(/^(\w+):\s*"?(.*?)"?\s*$/);
+              if (m) meta[m[1]] = m[2].replace(/^"|"$/g, '').trim();
+            });
+            body = parts.slice(2).join('---').trim();
+          }
+          renderEditor(slug, {
+            title: meta.title || slug,
+            date: meta.date || '',
+            tagClass: meta.tagClass || 'tag-other',
+            summary: meta.summary || '',
+            body: body,
+            slug: slug,
+          });
+        })
+        .catch(function () { alert('加载失败'); });
+    };
+
     function renderEditor(slug, defaults) {
-      headerActions.innerHTML = `
-        <button class="btn btn-outline" onclick="window._backToList()">← 返回列表</button>
-        <span style="margin-left:12px;font-size:0.88rem;color:var(--text2);">${slug ? '编辑：' + esc(defaults.title || slug) : '新建文章'}</span>`;
+      currentSlug = defaults.slug || slug || '';
+      headerEl.innerHTML = `
+        <a href="/blog/" target="_blank">← 返回博客</a>
+        <div class="template-btn">
+          <button class="btn btn-outline btn-sm" onclick="window.__toggleTemplates()">📄 模板</button>
+          <div class="template-dropdown" id="templateDropdown">
+            ${Object.keys(TEMPLATES).map(function(k) {
+              return '<button onclick="window.__insertTemplate(\'' + esc(k) + '\')">' + k + '</button>';
+            }).join('')}
+          </div>
+        </div>
+        <span style="margin-left:8px;font-size:0.85rem;color:var(--text2);">${slug ? '编辑' : '新建'}</span>`;
 
       var tagOptions = TAGS.map(function (t) {
-        var sel = defaults.tagClass === t.value ? ' selected' : '';
-        return '<option value="' + t.value + '"' + sel + '>' + t.label + '</option>';
+        return '<option value="' + t.value + '"' + (defaults.tagClass === t.value ? ' selected' : '') + '>' + t.label + '</option>';
       }).join('');
 
       app.innerHTML = `
         <div class="editor-container active">
-          <div class="editor-panes">
-            <div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>标题</label>
-                  <input type="text" id="edTitle" value="${esc(defaults.title || '')}">
-                </div>
-                <div class="form-group">
-                  <label>日期</label>
-                  <input type="date" id="edDate" value="${esc(defaults.date || today())}">
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>标签</label>
-                  <select id="edTagClass">${tagOptions}</select>
-                </div>
-                <div class="form-group">
-                  <label>摘要</label>
-                  <input type="text" id="edSummary" value="${esc(defaults.summary || '')}" placeholder="简短描述，会显示在文章卡片上">
-                </div>
-              </div>
-              <div class="form-group">
-                <label>正文（Markdown）</label>
-                <textarea id="edBody">${esc(defaults.body || '')}</textarea>
-              </div>
+          <div class="editor-top">
+            <div class="form-group">
+              <label>标题 *</label>
+              <input type="text" id="edTitle" value="${esc(defaults.title || '')}" placeholder="文章标题">
             </div>
-            <div>
-              <label style="font-size:0.85rem;font-weight:520;display:block;margin-bottom:4px;color:var(--text2);">实时预览</label>
-              <div class="preview-pane" id="preview"></div>
+            <div class="form-group">
+              <label>日期</label>
+              <input type="date" id="edDate" value="${esc(defaults.date || today())}">
+            </div>
+            <div class="form-group">
+              <label>标签</label>
+              <select id="edTagClass">${tagOptions}</select>
+            </div>
+            <div class="form-group">
+              <label>Slug（URL路径）</label>
+              <input type="text" id="edSlug" value="${esc(currentSlug || slugify(defaults.title || 'new-post'))}" placeholder="url-slug">
             </div>
           </div>
-          <div class="editor-actions">
-            <button class="btn btn-green" onclick="window._savePost('${esc(slug || '')}')">保存到 GitHub</button>
-            <button class="btn btn-outline" onclick="window._backToList()">取消</button>
-            <span class="status-msg" id="status"></span>
+          <div class="form-group">
+            <label>摘要</label>
+            <input type="text" id="edSummary" value="${esc(defaults.summary || '')}" placeholder="简短描述，显示在文章卡片上">
+          </div>
+          <div class="form-group">
+            <label>正文（Markdown）</label>
+            <textarea id="edBody">${esc(defaults.body || '')}</textarea>
+          </div>
+          <div class="editor-meta">
+            <span class="status info" id="saveStatus">已就绪</span>
+            <button class="btn btn-green" onclick="window.__savePost()" id="saveBtn">💾 保存到 GitHub</button>
+            <button class="btn btn-outline" onclick="window.__backToList()">取消</button>
           </div>
         </div>`;
 
-      var bodyEl = document.getElementById('edBody');
-      var preview = document.getElementById('preview');
-      function updatePreview() {
-        preview.innerHTML = marked.parse(bodyEl.value) || '<span style="color:var(--text3);">预览区域</span>';
-      }
-      bodyEl.addEventListener('input', updatePreview);
-      updatePreview();
+      // Init EasyMDE
+      if (easyMDE) { easyMDE.toTextArea(); easyMDE = null; }
+      easyMDE = new EasyMDE({
+        element: document.getElementById('edBody'),
+        spellChecker: false,
+        placeholder: '在此撰写文章...',
+        autosave: { enabled: false },
+        toolbar: [
+          'bold', 'italic', 'heading', '|',
+          'quote', 'unordered-list', 'ordered-list', '|',
+          'link', 'image', 'table', 'horizontal-rule', '|',
+          'code', 'code-block', '|',
+          'preview', 'side-by-side', 'fullscreen', '|',
+          'guide'
+        ],
+        status: ['words', 'lines', 'cursor'],
+        sideBySideFullscreen: false,
+      });
+
+      // Ctrl/Cmd+S to save
+      easyMDE.codemirror.setOption('extraKeys', {
+        'Ctrl-S': function () { window.__savePost(); },
+        'Cmd-S': function () { window.__savePost(); },
+      });
+
+      // Auto-update slug from title
+      document.getElementById('edTitle').addEventListener('input', function () {
+        if (!currentSlug) {
+          document.getElementById('edSlug').value = slugify(this.value);
+        }
+      });
     }
 
+    // ---- Template ----
+    window.__toggleTemplates = function () {
+      document.getElementById('templateDropdown').classList.toggle('open');
+    };
+    window.__insertTemplate = function (name) {
+      document.getElementById('templateDropdown').classList.remove('open');
+      if (easyMDE) {
+        easyMDE.codemirror.replaceSelection(TEMPLATES[name]);
+        easyMDE.codemirror.focus();
+      }
+    };
+    // Close template dropdown on outside click
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.template-btn')) {
+        var dd = document.getElementById('templateDropdown');
+        if (dd) dd.classList.remove('open');
+      }
+    });
+
     // ---- Save ----
-    window._savePost = function (slug) {
+    window.__savePost = function () {
       var title = document.getElementById('edTitle').value.trim();
       var date = document.getElementById('edDate').value;
       var tagClass = document.getElementById('edTagClass').value;
       var tagLabel = TAGS.find(function (t) { return t.value === tagClass; }).label;
       var summary = document.getElementById('edSummary').value.trim();
-      var body = document.getElementById('edBody').value;
-      var status = document.getElementById('status');
+      var newSlug = document.getElementById('edSlug').value.trim() || slugify(title);
+      var body = easyMDE.value();
+      var oldSlug = currentSlug || null;
+      var status = document.getElementById('saveStatus');
+      var saveBtn = document.getElementById('saveBtn');
 
       if (!title || !date || !body) {
-        status.className = 'status-msg err';
+        status.className = 'status err';
         status.textContent = '请填写标题、日期和正文';
         return;
       }
 
-      // Generate slug from title if new
-      var newSlug = slug || title.toLowerCase()
-        .replace(/[^\w一-鿿]+/g, '-')
-        .replace(/^-|-$/g, '')
-        .substring(0, 50) || 'untitled';
-
-      // Build frontmatter
       var fm = [
         '---',
         'title: "' + title + '"',
@@ -344,122 +574,112 @@
         body
       ].join('\n');
 
-      var path = 'posts/' + newSlug + '.md';
-      var commitMsg = slug ? 'update: ' + title : 'new: ' + title;
-
-      status.className = 'status-msg';
+      status.className = 'status info';
       status.innerHTML = '<span class="spinner"></span>保存中...';
+      saveBtn.disabled = true;
 
-      // Get existing sha if editing
-      var getSha = slug
-        ? fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + path + '?ref=' + BRANCH, {
-            headers: apiHeaders()
-          }).then(function (r) { return r.ok ? r.json() : Promise.resolve(null); })
-        : Promise.resolve(null);
+      // If slug changed, delete old file
+      var deleteOldPromise = (oldSlug && oldSlug !== newSlug)
+        ? fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts/' + oldSlug + '.md?ref=' + BRANCH, { headers: apiHeaders() })
+            .then(function (r) { return r.json(); })
+            .then(function (file) {
+              return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts/' + oldSlug + '.md', {
+                method: 'DELETE',
+                headers: apiHeaders(),
+                body: JSON.stringify({ message: 'rename: ' + oldSlug + ' -> ' + newSlug, sha: file.sha, branch: BRANCH }),
+              });
+            }).catch(function () { /* old file might not exist */ })
+        : Promise.resolve();
 
-      getSha.then(function (existing) {
-        var body_data = {
-          message: commitMsg,
-          content: btoa(unescape(encodeURIComponent(fm))),
+      deleteOldPromise.then(function () {
+        var path = 'posts/' + newSlug + '.md';
+        return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + path + '?ref=' + BRANCH, { headers: apiHeaders() })
+          .then(function (r) { return r.ok ? r.json() : Promise.resolve(null); });
+      })
+      .then(function (existing) {
+        var bodyData = {
+          message: (oldSlug ? 'update: ' : 'new: ') + title,
+          content: encode(fm),
           branch: BRANCH,
         };
-        if (existing && existing.sha) {
-          body_data.sha = existing.sha;
-        }
-
-        return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + path, {
-          method: 'PUT',
-          headers: apiHeaders(),
-          body: JSON.stringify(body_data),
+        if (existing && existing.sha) bodyData.sha = existing.sha;
+        return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts/' + newSlug + '.md', {
+          method: 'PUT', headers: apiHeaders(), body: JSON.stringify(bodyData),
         });
       })
-      .then(function (res) {
-        if (!res.ok) {
-          return res.json().then(function (e) { throw new Error(e.message || 'API error'); });
-        }
-        return res.json();
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (e) { throw new Error(e.message); });
+        return r.json();
       })
       .then(function () {
-        status.className = 'status-msg ok';
-        status.textContent = '已保存！约30秒后 GitHub Pages 自动部署完成。';
-        // Also update posts.json for immediate list update
-        updatePostsJson(newSlug, title, date, tagLabel, tagClass, summary);
+        currentSlug = newSlug;
+        document.getElementById('edSlug').value = newSlug;
+        return updatePostsJson(newSlug, title, date, tagLabel, tagClass, summary, oldSlug);
+      })
+      .then(function () {
+        status.className = 'status ok';
+        status.textContent = '已保存！GitHub Pages 即将自动部署。';
+        saveBtn.disabled = false;
       })
       .catch(function (err) {
-        status.className = 'status-msg err';
+        status.className = 'status err';
         status.textContent = '保存失败: ' + err.message;
+        saveBtn.disabled = false;
       });
     };
 
-    // Also update posts.json via API for immediate list refresh
-    function updatePostsJson(slug, title, date, tag, tagClass, summary) {
-      fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json?ref=' + BRANCH, {
-        headers: apiHeaders()
-      })
-      .then(function (r) { return r.json(); })
-      .then(function (file) {
-        var posts = JSON.parse(atob(file.content));
-        var idx = posts.findIndex(function (p) { return p.slug === slug; });
-        var entry = { slug: slug, title: title, date: date, tag: tag, tagClass: tagClass, summary: summary };
-        if (idx >= 0) {
-          posts[idx] = entry;
-        } else {
-          posts.unshift(entry);
-        }
-        posts.sort(function (a, b) { return new Date(b.date) - new Date(a.date); });
-        var newContent = JSON.stringify(posts, null, 2) + '\n';
-
-        return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json', {
-          method: 'PUT',
-          headers: apiHeaders(),
-          body: JSON.stringify({
-            message: 'chore: update posts.json',
-            content: btoa(unescape(encodeURIComponent(newContent))),
-            sha: file.sha,
-            branch: BRANCH,
-          }),
+    function updatePostsJson(slug, title, date, tag, tagClass, summary, oldSlug) {
+      return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json?ref=' + BRANCH, { headers: apiHeaders() })
+        .then(function (r) { return r.json(); })
+        .then(function (file) {
+          var posts = JSON.parse(decode(file.content));
+          // Remove old slug entry if renamed
+          if (oldSlug && oldSlug !== slug) {
+            var oi = posts.findIndex(function (p) { return p.slug === oldSlug; });
+            if (oi >= 0) posts.splice(oi, 1);
+          }
+          var idx = posts.findIndex(function (p) { return p.slug === slug; });
+          var entry = { slug: slug, title: title, date: date, tag: tag, tagClass: tagClass, summary: summary };
+          // Preserve pinned state
+          if (idx >= 0 && posts[idx].pinned) entry.pinned = true;
+          if (idx >= 0) { posts[idx] = entry; }
+          else { posts.unshift(entry); }
+          var nc = JSON.stringify(posts, null, 2) + '\n';
+          return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json', {
+            method: 'PUT', headers: apiHeaders(),
+            body: JSON.stringify({ message: 'chore: update posts.json', content: encode(nc), sha: file.sha, branch: BRANCH }),
+          });
         });
-      })
-      .catch(function () { /* ignore, GitHub Action will regenerate */ });
     }
 
-    // ---- Navigation ----
-    window._newPost = function () { renderEditor('', {}); };
-    window._editPost = function (slug) {
-      fetch('posts/' + slug + '.md')
-        .then(function (r) { return r.text(); })
-        .then(function (raw) {
-          var parts = raw.split('---');
-          var meta = {};
-          if (parts.length >= 3) {
-            var fm = parts[1];
-            fm.split('\n').forEach(function (line) {
-              var m = line.match(/^(\w+):\s*"?(.*?)"?$/);
-              if (m) meta[m[1]] = m[2].replace(/^"|"$/g, '').trim();
-            });
-            var body = parts.slice(2).join('---').trim();
-            renderEditor(slug, {
-              title: meta.title || slug,
-              date: meta.date || '',
-              tagClass: meta.tagClass || 'tag-other',
-              summary: meta.summary || '',
-              body: body,
-            });
-          } else {
-            renderEditor(slug, { title: slug, body: raw.trim() });
-          }
-        })
-        .catch(function () { alert('加载文章失败'); });
+    window.__backToList = function () {
+      if (easyMDE) { easyMDE.toTextArea(); easyMDE = null; }
+      currentSlug = null;
+      loadPosts(renderPostList);
     };
 
-    window._backToList = function () { loadPosts(renderPostList); };
-    window._logout = function () { logout(); };
+    window.__logout = function () { logout(); };
+
+    // ---- Load posts ----
+    function loadPosts(cb) {
+      fetch('posts.json')
+        .then(function (r) { return r.json(); })
+        .then(function (posts) { cb(posts); })
+        .catch(function () { cb([]); });
+    }
+
+    // ---- Encode/decode base64 ----
+    function encode(s) {
+      return btoa(unescape(encodeURIComponent(s)));
+    }
+    function decode(s) {
+      return decodeURIComponent(escape(atob(s)));
+    }
 
     // ---- Init ----
-    function load() {
-      var token = getToken();
-      if (!token) { renderAuth(); return; }
-      // Verify token
+    function init() {
+      var t = token();
+      if (!t) { renderAuth(); return; }
       fetch(API + '/repos/' + OWNER + '/' + REPO, { headers: apiHeaders() })
         .then(function (r) {
           if (!r.ok) { clearToken(); renderAuth(); return; }
@@ -468,13 +688,16 @@
         .catch(function () { clearToken(); renderAuth(); });
     }
 
-    function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-    function today() {
-      var d = new Date();
-      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-    }
+    // Click away close modal
+    document.getElementById('deleteModal').addEventListener('click', function (e) {
+      if (e.target === this) window._closeDeleteModal();
+    });
+    // Esc close modal
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') window._closeDeleteModal();
+    });
 
-    load();
+    init();
   })();
   </script>
 </body>
