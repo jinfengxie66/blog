@@ -3,9 +3,479 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>内容管理 - 山間小站</title>
+  <title>文章管理 · 山間小站</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --bg: #f9f6f0;
+      --card: #fff;
+      --text: #4a4238;
+      --text2: #8b8178;
+      --text3: #b9b0a6;
+      --border: #e6e0d4;
+      --accent: #8b5e3c;
+      --accent2: #c99a6b;
+      --red: #c0392b;
+      --green: #27ae60;
+      --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --serif: "Noto Serif SC", "Songti SC", serif;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .container { max-width: 960px; margin: 0 auto; padding: 20px 24px; }
+
+    /* Header */
+    .admin-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 24px; border-bottom: 1px solid var(--border);
+      background: rgba(249,246,240,0.92); backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .admin-header h1 { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.04em; }
+    .admin-header a { color: var(--text2); font-size: 0.88rem; text-decoration: none; margin-right: 16px; }
+    .admin-header a:hover { color: var(--text); }
+    .btn {
+      padding: 8px 18px; border: none; border-radius: var(--radius);
+      cursor: pointer; font-size: 0.88rem; font-weight: 520;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+    .btn-outline:hover { background: var(--border); color: var(--text); }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-sm { padding: 5px 12px; font-size: 0.8rem; }
+
+    /* Auth page */
+    .auth-box {
+      max-width: 420px; margin: 80px auto; padding: 40px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; text-align: center;
+    }
+    .auth-box h2 { font-family: var(--serif); margin-bottom: 8px; font-size: 1.4rem; }
+    .auth-box p { color: var(--text2); font-size: 0.92rem; margin-bottom: 24px; line-height: 1.7; }
+    .auth-box a { color: var(--accent); }
+    .auth-box input {
+      width: 100%; padding: 12px 16px; border: 1px solid var(--border);
+      border-radius: var(--radius); font-size: 0.9rem; font-family: monospace;
+      background: var(--bg); color: var(--text);
+      margin-bottom: 16px;
+    }
+    .auth-box input:focus { outline: none; border-color: var(--accent); }
+
+    /* Post list */
+    .post-list-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 32px 0 20px;
+    }
+    .post-list-header h3 { font-family: var(--serif); font-size: 1.15rem; }
+    .post-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 10px;
+      transition: box-shadow 0.2s;
+    }
+    .post-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .post-item-info { flex: 1; }
+    .post-item-info strong { font-size: 0.96rem; }
+    .post-item-info span { font-size: 0.8rem; color: var(--text3); margin-left: 12px; }
+    .post-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .tag-sm { display: inline-block; padding: 1px 8px; font-size: 0.7rem; border-radius: 3px; font-weight: 500; }
+    .tag-algo { background: #fef0e0; color: #8b5e3c; }
+    .tag-agent { background: #e8ecf4; color: #4a5580; }
+    .tag-llm { background: #f2e4ec; color: #7d4a6a; }
+    .tag-dl { background: #e0ecf0; color: #3a6b7d; }
+    .tag-ml { background: #fce8e4; color: #8b4a3c; }
+    .tag-crawl { background: #eae8e4; color: #5c5448; }
+    .tag-da { background: #e0ece3; color: #4a6b5a; }
+    .tag-other { background: #f3f4f6; color: #6b7280; }
+
+    /* Editor */
+    .editor-container { margin-top: 24px; display: none; }
+    .editor-container.active { display: block; }
+    .editor-panes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+    @media (max-width: 700px) { .editor-panes { grid-template-columns: 1fr; } }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 520; margin-bottom: 4px; color: var(--text2); }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius); font-size: 0.9rem; font-family: var(--font);
+      background: var(--card); color: var(--text);
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none; border-color: var(--accent);
+    }
+    .form-group textarea { resize: vertical; min-height: 300px; font-family: monospace; font-size: 0.88rem; line-height: 1.6; }
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-group { flex: 1; }
+    .preview-pane {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+      min-height: 300px; font-size: 0.93rem; overflow-y: auto;
+    }
+    .preview-pane h2 { font-size: 1.2rem; margin: 16px 0 8px; }
+    .preview-pane h3 { font-size: 1.05rem; margin: 12px 0 6px; }
+    .preview-pane p { margin-bottom: 12px; }
+    .preview-pane pre { background: #f5f2eb; padding: 12px 16px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; }
+    .preview-pane code { font-family: monospace; font-size: 0.88em; background: #f5f2eb; padding: 2px 4px; border-radius: 3px; }
+    .preview-pane pre code { background: none; padding: 0; }
+    .preview-pane blockquote { border-left: 3px solid var(--accent2); padding-left: 14px; color: var(--text2); margin: 12px 0; }
+    .preview-pane table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    .preview-pane th, .preview-pane td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+    .preview-pane th { background: var(--bg); }
+
+    .editor-actions { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
+    .status-msg { font-size: 0.88rem; }
+    .status-msg.ok { color: var(--green); }
+    .status-msg.err { color: var(--red); }
+
+    /* Loading */
+    .loading { text-align: center; padding: 40px; color: var(--text3); }
+    .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: -4px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
+  <header class="admin-header">
+    <div>
+      <h1>文章管理</h1>
+      <a href="/blog/" target="_blank">← 返回博客</a>
+    </div>
+    <div id="headerActions"></div>
+  </header>
+
+  <div class="container" id="app">
+    <!-- Rendered by JS -->
+  </div>
+
+  <script>
+  (function () {
+    const OWNER = 'jinfengxie66';
+    const REPO = 'blog';
+    const BRANCH = 'master';
+    const API = 'https://api.github.com';
+
+    const TAGS = [
+      { label: 'Python 算法', value: 'tag-algo' },
+      { label: 'Agent', value: 'tag-agent' },
+      { label: '大模型', value: 'tag-llm' },
+      { label: '深度学习', value: 'tag-dl' },
+      { label: '机器学习', value: 'tag-ml' },
+      { label: '爬虫', value: 'tag-crawl' },
+      { label: '数据分析', value: 'tag-da' },
+      { label: '其他', value: 'tag-other' }
+    ];
+
+    const app = document.getElementById('app');
+    const headerActions = document.getElementById('headerActions');
+
+    function getToken() { return localStorage.getItem('blog_admin_token'); }
+    function setToken(t) { localStorage.setItem('blog_admin_token', t); }
+    function clearToken() { localStorage.removeItem('blog_admin_token'); }
+
+    function apiHeaders() {
+      return {
+        'Authorization': 'Bearer ' + getToken(),
+        'Accept': 'application/vnd.github.v3+json',
+      };
+    }
+
+    // ---- Render Auth ----
+    function renderAuth() {
+      headerActions.innerHTML = '';
+      app.innerHTML = `
+        <div class="auth-box">
+          <h2>管理后台</h2>
+          <p>请输入 GitHub Personal Access Token（Classic），需勾选 <code>repo</code> 权限。<br>
+          在 <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> 创建。</p>
+          <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          <button class="btn btn-accent" onclick="window._saveToken()" style="width:100%;padding:12px;">保存并登录</button>
+        </div>`;
+    }
+
+    window._saveToken = function () {
+      var t = document.getElementById('tokenInput').value.trim();
+      if (!t) { alert('请输入 Token'); return; }
+      setToken(t);
+      load();
+    };
+
+    function logout() {
+      clearToken();
+      renderAuth();
+    }
+
+    // ---- Render post list ----
+    function renderPostList(posts) {
+      headerActions.innerHTML = `
+        <button class="btn btn-accent" onclick="window._newPost()">＋ 新建文章</button>
+        <button class="btn btn-outline btn-sm" onclick="window._logout()">退出</button>`;
+      var html = '<div class="post-list-header"><h3>所有文章</h3></div>';
+      if (posts.length === 0) {
+        html += '<p style="color:var(--text3);text-align:center;padding:40px;">暂无文章，点击上方按钮新建。</p>';
+      }
+      posts.forEach(function (p) {
+        html += `
+          <div class="post-item">
+            <div class="post-item-info">
+              <strong>${esc(p.title)}</strong>
+              <span class="tag-sm ${p.tagClass}">${esc(p.tag)}</span>
+              <span>${esc(p.date)}</span>
+            </div>
+            <div class="post-item-actions">
+              <button class="btn btn-outline btn-sm" onclick="window._editPost('${esc(p.slug)}')">编辑</button>
+            </div>
+          </div>`;
+      });
+      app.innerHTML = html;
+    }
+
+    // ---- Load posts ----
+    function loadPosts(cb) {
+      fetch('posts.json')
+        .then(function (r) { return r.json(); })
+        .then(function (posts) { cb(posts); })
+        .catch(function () { cb([]); });
+    }
+
+    // ---- Editor ----
+    function renderEditor(slug, defaults) {
+      headerActions.innerHTML = `
+        <button class="btn btn-outline" onclick="window._backToList()">← 返回列表</button>
+        <span style="margin-left:12px;font-size:0.88rem;color:var(--text2);">${slug ? '编辑：' + esc(defaults.title || slug) : '新建文章'}</span>`;
+
+      var tagOptions = TAGS.map(function (t) {
+        var sel = defaults.tagClass === t.value ? ' selected' : '';
+        return '<option value="' + t.value + '"' + sel + '>' + t.label + '</option>';
+      }).join('');
+
+      app.innerHTML = `
+        <div class="editor-container active">
+          <div class="editor-panes">
+            <div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>标题</label>
+                  <input type="text" id="edTitle" value="${esc(defaults.title || '')}">
+                </div>
+                <div class="form-group">
+                  <label>日期</label>
+                  <input type="date" id="edDate" value="${esc(defaults.date || today())}">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>标签</label>
+                  <select id="edTagClass">${tagOptions}</select>
+                </div>
+                <div class="form-group">
+                  <label>摘要</label>
+                  <input type="text" id="edSummary" value="${esc(defaults.summary || '')}" placeholder="简短描述，会显示在文章卡片上">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>正文（Markdown）</label>
+                <textarea id="edBody">${esc(defaults.body || '')}</textarea>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.85rem;font-weight:520;display:block;margin-bottom:4px;color:var(--text2);">实时预览</label>
+              <div class="preview-pane" id="preview"></div>
+            </div>
+          </div>
+          <div class="editor-actions">
+            <button class="btn btn-green" onclick="window._savePost('${esc(slug || '')}')">保存到 GitHub</button>
+            <button class="btn btn-outline" onclick="window._backToList()">取消</button>
+            <span class="status-msg" id="status"></span>
+          </div>
+        </div>`;
+
+      var bodyEl = document.getElementById('edBody');
+      var preview = document.getElementById('preview');
+      function updatePreview() {
+        preview.innerHTML = marked.parse(bodyEl.value) || '<span style="color:var(--text3);">预览区域</span>';
+      }
+      bodyEl.addEventListener('input', updatePreview);
+      updatePreview();
+    }
+
+    // ---- Save ----
+    window._savePost = function (slug) {
+      var title = document.getElementById('edTitle').value.trim();
+      var date = document.getElementById('edDate').value;
+      var tagClass = document.getElementById('edTagClass').value;
+      var tagLabel = TAGS.find(function (t) { return t.value === tagClass; }).label;
+      var summary = document.getElementById('edSummary').value.trim();
+      var body = document.getElementById('edBody').value;
+      var status = document.getElementById('status');
+
+      if (!title || !date || !body) {
+        status.className = 'status-msg err';
+        status.textContent = '请填写标题、日期和正文';
+        return;
+      }
+
+      // Generate slug from title if new
+      var newSlug = slug || title.toLowerCase()
+        .replace(/[^\w一-鿿]+/g, '-')
+        .replace(/^-|-$/g, '')
+        .substring(0, 50) || 'untitled';
+
+      // Build frontmatter
+      var fm = [
+        '---',
+        'title: "' + title + '"',
+        'date: "' + date + '"',
+        'tag: "' + tagLabel + '"',
+        'tagClass: "' + tagClass + '"',
+        'summary: "' + summary + '"',
+        '---',
+        '',
+        body
+      ].join('\n');
+
+      var path = 'posts/' + newSlug + '.md';
+      var commitMsg = slug ? 'update: ' + title : 'new: ' + title;
+
+      status.className = 'status-msg';
+      status.innerHTML = '<span class="spinner"></span>保存中...';
+
+      // Get existing sha if editing
+      var getSha = slug
+        ? fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + path + '?ref=' + BRANCH, {
+            headers: apiHeaders()
+          }).then(function (r) { return r.ok ? r.json() : Promise.resolve(null); })
+        : Promise.resolve(null);
+
+      getSha.then(function (existing) {
+        var body_data = {
+          message: commitMsg,
+          content: btoa(unescape(encodeURIComponent(fm))),
+          branch: BRANCH,
+        };
+        if (existing && existing.sha) {
+          body_data.sha = existing.sha;
+        }
+
+        return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/' + path, {
+          method: 'PUT',
+          headers: apiHeaders(),
+          body: JSON.stringify(body_data),
+        });
+      })
+      .then(function (res) {
+        if (!res.ok) {
+          return res.json().then(function (e) { throw new Error(e.message || 'API error'); });
+        }
+        return res.json();
+      })
+      .then(function () {
+        status.className = 'status-msg ok';
+        status.textContent = '已保存！约30秒后 GitHub Pages 自动部署完成。';
+        // Also update posts.json for immediate list update
+        updatePostsJson(newSlug, title, date, tagLabel, tagClass, summary);
+      })
+      .catch(function (err) {
+        status.className = 'status-msg err';
+        status.textContent = '保存失败: ' + err.message;
+      });
+    };
+
+    // Also update posts.json via API for immediate list refresh
+    function updatePostsJson(slug, title, date, tag, tagClass, summary) {
+      fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json?ref=' + BRANCH, {
+        headers: apiHeaders()
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (file) {
+        var posts = JSON.parse(atob(file.content));
+        var idx = posts.findIndex(function (p) { return p.slug === slug; });
+        var entry = { slug: slug, title: title, date: date, tag: tag, tagClass: tagClass, summary: summary };
+        if (idx >= 0) {
+          posts[idx] = entry;
+        } else {
+          posts.unshift(entry);
+        }
+        posts.sort(function (a, b) { return new Date(b.date) - new Date(a.date); });
+        var newContent = JSON.stringify(posts, null, 2) + '\n';
+
+        return fetch(API + '/repos/' + OWNER + '/' + REPO + '/contents/posts.json', {
+          method: 'PUT',
+          headers: apiHeaders(),
+          body: JSON.stringify({
+            message: 'chore: update posts.json',
+            content: btoa(unescape(encodeURIComponent(newContent))),
+            sha: file.sha,
+            branch: BRANCH,
+          }),
+        });
+      })
+      .catch(function () { /* ignore, GitHub Action will regenerate */ });
+    }
+
+    // ---- Navigation ----
+    window._newPost = function () { renderEditor('', {}); };
+    window._editPost = function (slug) {
+      fetch('posts/' + slug + '.md')
+        .then(function (r) { return r.text(); })
+        .then(function (raw) {
+          var parts = raw.split('---');
+          var meta = {};
+          if (parts.length >= 3) {
+            var fm = parts[1];
+            fm.split('\n').forEach(function (line) {
+              var m = line.match(/^(\w+):\s*"?(.*?)"?$/);
+              if (m) meta[m[1]] = m[2].replace(/^"|"$/g, '').trim();
+            });
+            var body = parts.slice(2).join('---').trim();
+            renderEditor(slug, {
+              title: meta.title || slug,
+              date: meta.date || '',
+              tagClass: meta.tagClass || 'tag-other',
+              summary: meta.summary || '',
+              body: body,
+            });
+          } else {
+            renderEditor(slug, { title: slug, body: raw.trim() });
+          }
+        })
+        .catch(function () { alert('加载文章失败'); });
+    };
+
+    window._backToList = function () { loadPosts(renderPostList); };
+    window._logout = function () { logout(); };
+
+    // ---- Init ----
+    function load() {
+      var token = getToken();
+      if (!token) { renderAuth(); return; }
+      // Verify token
+      fetch(API + '/repos/' + OWNER + '/' + REPO, { headers: apiHeaders() })
+        .then(function (r) {
+          if (!r.ok) { clearToken(); renderAuth(); return; }
+          loadPosts(renderPostList);
+        })
+        .catch(function () { clearToken(); renderAuth(); });
+    }
+
+    function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function today() {
+      var d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    load();
+  })();
+  </script>
 </body>
 </html>
