@@ -2,7 +2,7 @@ backend:
   name: github
   repo: jinfengxie66/blog
   branch: master
-  site_url: https://jinfengxie66.github.io
+  site_url: https://jinfengxie66.github.io/blog
 
 media_folder: "img"
 
