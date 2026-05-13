@@ -260,7 +260,7 @@
 
     function esc(s) {
       return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+              .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
     function today() {
@@ -323,7 +323,7 @@
         html += '<div id="postItems">' + posts.map(function (p) {
           var pinnedHtml = p.pinned ? '<span class="pinned-badge">置顶</span>' : '';
           return `
-          <div class="post-item">
+          <div class="post-item" data-slug="${esc(p.slug)}" data-title="${esc(p.title)}" data-pinned="${p.pinned || false}">
             <div class="post-item-info">
               <strong>${pinnedHtml}${esc(p.title)}</strong>
               <div class="post-item-meta">
@@ -334,9 +334,9 @@
             </div>
             <div class="post-item-actions">
               <a class="btn btn-outline btn-xs" href="/blog/#post/${esc(p.slug)}" target="_blank" style="text-decoration:none;">预览</a>
-              ${p.pinned ? '<button class="btn btn-outline btn-xs" onclick="window.__togglePin(\'' + esc(p.slug) + '\',false)">取消置顶</button>' : '<button class="btn btn-outline btn-xs" onclick="window.__togglePin(\'' + esc(p.slug) + '\',true)">置顶</button>'}
-              <button class="btn btn-outline btn-xs" onclick="window.__editPost(\'' + esc(p.slug) + '\')">编辑</button>
-              <button class="btn btn-outline btn-xs" style="color:var(--red);border-color:var(--red);" onclick="window.__deletePost(\'' + esc(p.slug) + '\',\'' + esc(p.title.replace(/'/g, "\\'")) + '\')">删除</button>
+              <button class="btn btn-outline btn-xs act-pin" data-action="pin">${p.pinned ? '取消置顶' : '置顶'}</button>
+              <button class="btn btn-outline btn-xs act-edit" data-action="edit">编辑</button>
+              <button class="btn btn-outline btn-xs act-del" data-action="delete" style="color:var(--red);border-color:var(--red);">删除</button>
             </div>
           </div>`;
         }).join('') + '</div>';
@@ -354,6 +354,26 @@
           });
         });
       }
+
+      // Event delegation for post item actions
+      document.getElementById('postItems').addEventListener('click', function (e) {
+        var btn = e.target.closest('button');
+        if (!btn) return;
+        var item = btn.closest('.post-item');
+        if (!item) return;
+        var slug = item.dataset.slug;
+        var title = item.dataset.title;
+        var pinned = item.dataset.pinned === 'true';
+        var action = btn.dataset.action;
+
+        if (action === 'edit') {
+          window.__editPost(slug);
+        } else if (action === 'delete') {
+          window.__deletePost(slug, title);
+        } else if (action === 'pin') {
+          window.__togglePin(slug, !pinned);
+        }
+      });
     }
 
     // ---- Delete ----
