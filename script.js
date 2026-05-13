@@ -200,7 +200,7 @@
     });
   }
 
-  fetch('posts.json')
+  fetch('/blog/posts.json')
     .then(function (res) { return res.json(); })
     .then(function (posts) {
       renderPosts(posts);
@@ -233,7 +233,7 @@
         }
       }
       // fallback: fetch posts.json
-      fetch('posts.json')
+      fetch('/blog/posts.json')
         .then(function (res) { return res.json(); })
         .then(function (posts) {
           postsCache = posts;
@@ -252,14 +252,17 @@
   var currentSlug = null;
 
   function openPost(slug, title, date, tag, tagClass) {
+    if (currentSlug === slug && modalOverlay.classList.contains('open')) return;
     currentSlug = slug;
-    window.location.hash = 'post/' + slug;
+    if (window.location.hash !== '#post/' + slug) {
+      window.location.hash = 'post/' + slug;
+    }
     modalContent.innerHTML =
       '<div class="modal-loading">加载中...</div>';
     modalOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    fetch('posts/' + slug + '.md')
+    fetch('/blog/posts/' + slug + '.md')
       .then(function (res) {
         if (!res.ok) throw new Error('Not found');
         return res.text();
