@@ -311,14 +311,18 @@
         return new Date(b.date) - new Date(a.date);
       });
 
-      var html = '<div class="post-list-header"><h3>所有文章 (' + posts.length + ')</h3></div>';
+      var filterBar = `
+        <div class="post-list-header">
+          <h3>所有文章 (${posts.length})</h3>
+          <input type="text" id="searchInput" placeholder="搜索标题或标签..." style="padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;background:var(--card);color:var(--text);width:200px;">
+        </div>`;
+      var html = filterBar;
       if (posts.length === 0) {
         html += '<div class="loading">暂无文章，点击上方按钮新建。</div>';
-      }
-
-      posts.forEach(function (p) {
-        var pinnedHtml = p.pinned ? '<span class="pinned-badge">置顶</span>' : '';
-        html += `
+      } else {
+        html += '<div id="postItems">' + posts.map(function (p) {
+          var pinnedHtml = p.pinned ? '<span class="pinned-badge">置顶</span>' : '';
+          return `
           <div class="post-item">
             <div class="post-item-info">
               <strong>${pinnedHtml}${esc(p.title)}</strong>
@@ -329,13 +333,27 @@
               </div>
             </div>
             <div class="post-item-actions">
+              <a class="btn btn-outline btn-xs" href="/blog/#post/${esc(p.slug)}" target="_blank" style="text-decoration:none;">预览</a>
               ${p.pinned ? '<button class="btn btn-outline btn-xs" onclick="window.__togglePin(\'' + esc(p.slug) + '\',false)">取消置顶</button>' : '<button class="btn btn-outline btn-xs" onclick="window.__togglePin(\'' + esc(p.slug) + '\',true)">置顶</button>'}
               <button class="btn btn-outline btn-xs" onclick="window.__editPost(\'' + esc(p.slug) + '\')">编辑</button>
-              <button class="btn btn-outline btn-xs" style="color:var(--red);border-color:var(--red);" onclick="window.__deletePost(\'' + esc(p.slug) + '\',\'' + esc(p.title) + '\')">删除</button>
+              <button class="btn btn-outline btn-xs" style="color:var(--red);border-color:var(--red);" onclick="window.__deletePost(\'' + esc(p.slug) + '\',\'' + esc(p.title.replace(/'/g, "\\'")) + '\')">删除</button>
             </div>
           </div>`;
-      });
+        }).join('') + '</div>';
+      }
       app.innerHTML = html;
+
+      // Search filter
+      var searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          var q = this.value.toLowerCase();
+          document.querySelectorAll('#postItems .post-item').forEach(function (item) {
+            var text = item.textContent.toLowerCase();
+            item.style.display = q === '' || text.indexOf(q) >= 0 ? '' : 'none';
+          });
+        });
+      }
     }
 
     // ---- Delete ----
@@ -662,7 +680,7 @@
 
     // ---- Load posts ----
     function loadPosts(cb) {
-      fetch('posts.json')
+      fetch('/blog/posts.json')
         .then(function (r) { return r.json(); })
         .then(function (posts) { cb(posts); })
         .catch(function () { cb([]); });
