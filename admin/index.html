@@ -700,7 +700,7 @@
 
     // ---- Load posts ----
     function loadPosts(cb) {
-      fetch('/blog/posts.json')
+      fetch('https://raw.githubusercontent.com/' + OWNER + '/' + REPO + '/' + BRANCH + '/posts.json')
         .then(function (r) { return r.json(); })
         .then(function (posts) { cb(posts); })
         .catch(function () { cb([]); });
