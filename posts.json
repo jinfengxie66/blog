@@ -1,13 +1,5 @@
 [
   {
-    "slug": "test",
-    "title": "test",
-    "date": "2026-05-13",
-    "tag": "Python 算法",
-    "tagClass": "tag-algo",
-    "summary": "这是一个测试文章"
-  },
-  {
     "slug": "python-algorithm",
     "title": "Python 高效算法设计与性能优化技巧",
     "date": "2026-05-12",
