@@ -1,7 +1,7 @@
 ---
 title: "大模型微调实战：从 SFT 到 RLHF"
 date: "2026-05-06"
-tag: "大模型"
+tag: "LLM"
 tagClass: "tag-llm"
 summary: "以 Llama 为例，详解监督微调、奖励建模与强化学习对齐的全流程。"
 ---
@@ -41,4 +41,4 @@ PPO 算法是当前主流选择。关键技巧：
 
 ## 实战建议
 
-从 LLaMA-Factory 或 Axolotl 等成熟框架起步，避免重复造轮子。
+从 LLaMA-Factory 或 Axolotl 等成熟框架起步，避免重复造轮子。、
