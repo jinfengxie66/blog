@@ -13,7 +13,8 @@
     "date": "2026-05-06",
     "tag": "大模型",
     "tagClass": "tag-llm",
-    "summary": "以 Llama 为例，详解监督微调、奖励建模与强化学习对齐的全流程。"
+    "summary": "以 Llama 为例，详解监督微调、奖励建模与强化学习对齐的全流程。",
+    "pinned": true
   },
   {
     "slug": "transformer-architecture",
