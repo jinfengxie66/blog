@@ -544,6 +544,7 @@ a:hover {
 .panel-icon-moon { display: none; }
 [data-theme="dark"] .panel-icon-sun { display: none; }
 [data-theme="dark"] .panel-icon-moon { display: inline; }
+.hidden { display: none !important; }
 
 /* ---- Corgi SVG Button ---- */
 .corgi {

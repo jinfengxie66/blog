@@ -156,6 +156,12 @@
     switchTheme();
   });
 
+  // Show admin button if token exists
+  if (localStorage.getItem('blog_admin_token')) {
+    var panelAdmin = document.getElementById('panelAdmin');
+    if (panelAdmin) panelAdmin.classList.remove('hidden');
+  }
+
   document.getElementById('panelTop').addEventListener('click', function (e) {
     e.stopPropagation();
     window.scrollTo({ top: 0, behavior: 'smooth' });
