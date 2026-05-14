@@ -1,7 +1,4 @@
 (function () {
-  // —— 只读 Token（公开，仅用于提升 API 速率上限）——
-  var READ_TOKEN = 'GITHUB_READ_TOKEN_PLACEHOLDER';
-
   var html = document.documentElement;
   var toggleBtn = document.querySelector('.theme-toggle');
   var menuBtn = document.querySelector('.menu-toggle');
@@ -9,13 +6,12 @@
   var API = 'https://api.github.com/repos/jinfengxie66/blog/contents/';
   var ADMIN_TOKEN = localStorage.getItem('blog_admin_token');
 
-  // Helper: read from GitHub API (authenticated = 5000 req/h)
+  // Helper: read from GitHub API (uses admin token if available, otherwise unauthenticated)
   function apiRead(path) {
-    var headers = {};
-    if (READ_TOKEN && READ_TOKEN !== 'GITHUB_READ_TOKEN_PLACEHOLDER') {
-      headers.Authorization = 'Bearer ' + READ_TOKEN;
+    var headers = { Accept: 'application/vnd.github.v3+json' };
+    if (ADMIN_TOKEN) {
+      headers.Authorization = 'Bearer ' + ADMIN_TOKEN;
     }
-    headers.Accept = 'application/vnd.github.v3+json';
     return fetch(API + path + '?ref=master', { headers: headers })
       .then(function (r) {
         if (!r.ok) throw new Error('API error ' + r.status);
