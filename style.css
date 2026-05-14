@@ -305,6 +305,26 @@ a:hover {
   margin-left: auto;
 }
 
+/* Admin quick actions on blog cards */
+.post-admin-actions {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.btn-edit-quick,
+.btn-del-quick {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 1px 5px;
+  transition: background 0.2s;
+  line-height: 1;
+}
+.btn-edit-quick:hover { background: #e8ecf4; }
+.btn-del-quick:hover { background: #fce8e4; }
+
 .tag {
   display: inline-block;
   padding: 2px 10px;
