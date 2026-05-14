@@ -11,7 +11,7 @@
     "slug": "llm-finetune",
     "title": "大模型微调实战：从 SFT 到 RLHF",
     "date": "2026-05-06",
-    "tag": "大模型",
+    "tag": "LLM",
     "tagClass": "tag-llm",
     "summary": "以 Llama 为例，详解监督微调、奖励建模与强化学习对齐的全流程。",
     "pinned": true
