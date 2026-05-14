@@ -1,13 +1,5 @@
 [
   {
-    "slug": "python-algorithm",
-    "title": "Python 高效算法设计与性能优化技巧",
-    "date": "2026-05-12",
-    "tag": "Python 算法",
-    "tagClass": "tag-algo",
-    "summary": "从时间复杂度分析到实际工程中的缓存、并行与数据结构选型，写出真正高性能的 Python。"
-  },
-  {
     "slug": "ai-agent-design",
     "title": "构建智能 Agent 的架构设计与实践",
     "date": "2026-05-10",
