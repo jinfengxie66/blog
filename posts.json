@@ -8,15 +8,6 @@
     "summary": "从工具调用、记忆管理到多 Agent 协作，深入探讨 AI Agent 系统的核心设计模式。"
   },
   {
-    "slug": "llm-finetune",
-    "title": "大模型微调实战：从 SFT 到 RLHF",
-    "date": "2026-05-06",
-    "tag": "LLM",
-    "tagClass": "tag-llm",
-    "summary": "以 Llama 为例，详解监督微调、奖励建模与强化学习对齐的全流程。",
-    "pinned": false
-  },
-  {
     "slug": "transformer-architecture",
     "title": "Transformer 架构逐层拆解与实现",
     "date": "2026-05-02",
