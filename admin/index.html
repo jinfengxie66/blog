@@ -359,14 +359,21 @@ document.getElementById('btnDelCancel').onclick=function(){
   document.getElementById('delModal').classList.remove('open');
 };
 document.getElementById('btnDelConfirm').onclick=function(){
-  var s=delSlug;delSlug=null;
+  var s=delSlug;var t=delTitle;delSlug=null;
   document.getElementById('delModal').classList.remove('open');
+  // Optimistic: remove from DOM immediately
+  var row=postList.querySelector('[data-slug="'+s+'"]');
+  if(row)row.style.display='none';
+  var safe=true;
   fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/posts/'+s+'.md?ref='+BRANCH,{headers:AH()})
     .then(function(r){return r.json();})
     .then(function(f){return fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/posts/'+s+'.md',{method:'DELETE',headers:AH(),body:JSON.stringify({message:'delete: '+s,sha:f.sha,branch:BRANCH})});})
     .then(function(){return removeFromIndex(s);})
-    .then(function(){loadList();})
-    .catch(function(e){alert('删除失败: '+e.message);});
+    .catch(function(e){
+      safe=false;
+      if(row)row.style.display='';
+      alert('删除失败: '+e.message);
+    });
 };
 document.getElementById('delModal').addEventListener('click',function(e){if(e.target===this){delSlug=null;this.classList.remove('open');}});
 
@@ -503,7 +510,11 @@ function renderList(posts){
 }
 
 function loadList(){
-  fetch(RAW+'posts.json').then(function(r){return r.json();}).then(function(posts){renderList(posts);show(viewList);}).catch(function(){postList.innerHTML='<p style="color:var(--text3);text-align:center;padding:40px;">加载失败，请刷新重试。</p>';show(viewList);});
+  // Use GitHub API (authenticated, no CDN cache) for admin
+  fetch(API+'/repos/'+OWNER+'/'+REPO+'/contents/posts.json?ref='+BRANCH,{headers:AH()})
+    .then(function(r){return r.json();})
+    .then(function(f){renderList(JSON.parse(dec(f.content)));show(viewList);})
+    .catch(function(){postList.innerHTML='<p style="color:var(--text3);text-align:center;padding:40px;">加载失败，请刷新重试。</p>';show(viewList);});
 }
 
 // Init

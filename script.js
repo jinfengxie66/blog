@@ -206,7 +206,7 @@
     });
   }
 
-  fetch('https://raw.githubusercontent.com/jinfengxie66/blog/master/posts.json')
+  fetch('https://raw.githubusercontent.com/jinfengxie66/blog/master/posts.json?t='+Date.now())
     .then(function (res) { return res.json(); })
     .then(function (posts) {
       renderPosts(posts);
@@ -239,7 +239,7 @@
         }
       }
       // fallback: fetch posts.json
-      fetch('https://raw.githubusercontent.com/jinfengxie66/blog/master/posts.json')
+      fetch('https://raw.githubusercontent.com/jinfengxie66/blog/master/posts.json?t='+Date.now())
         .then(function (res) { return res.json(); })
         .then(function (posts) {
           postsCache = posts;
@@ -268,7 +268,7 @@
     modalOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    fetch('https://raw.githubusercontent.com/jinfengxie66/blog/master/posts/' + slug + '.md')
+    fetch('https://raw.githubusercontent.com/jinfengxie66/blog/master/posts/' + slug + '.md?t='+Date.now())
       .then(function (res) {
         if (!res.ok) throw new Error('Not found');
         return res.text();
